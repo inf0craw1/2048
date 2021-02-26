@@ -30,13 +30,16 @@ export function Box(prop){
     } else if(value === 2048){
         fs = "40px";
         bg = "#000000";
+    } else {
+        fs = "40px";
+        bg = "#000000";
     }
     
     fc = (value >= 128) ? "white" : "black";
 
     return (
         <div className="box" style={{background: bg, color: fc, fontSize: fs}}>
-            <p>{value}</p>
+            <p>{value ? value : null}</p>
         </div>
     )
 }

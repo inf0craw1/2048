@@ -1,32 +1,28 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useSwipeable } from "react-swipeable";
 import { Box } from "./components/Box";
 import "./css/app.scss";
-
-const GAME_SETTING = {
-    display: {
-        width: 640,
-        height: 480,
-    }
-}
 
 
 function App() {
         
     const [board, setBoard] = Object.freeze(useState(Array.from({length: 4},()=> Array.from({length: 4}, () => 0))));
-    const control = useRef(null);
+    
+    const { swipeRef } = useSwipeable({
+        
+        onSwiped: () => console.log("swiped"),
+        onSwipedLeft: () => handleKeyDown({ keyCode: 37}),
+    })
+
     useEffect(() => {
-        setBoard([
-            [32,32,0,0],
-            [0,0,0,0],
-            [0,0,0,0],
-            [0,0,0,0]
-        ]);
+        let tmpBoard = board.slice();
+        tmpBoard[0][0] = 2;
+        setBoard(tmpBoard);
         window.addEventListener("keydown", handleKeyDown);
-        control.current.focus();
     }, [])
 
     function createRandomBox(){
-        let nums = [32,32,32,32];
+        let nums = [2,2,2,4];
         let createNum = Math.floor(Math.random()*4);
         let tmpBoard = board.slice();
         let zeroNum = 0;
@@ -38,13 +34,13 @@ function App() {
         }
         if(zeroNum === 0) return;
         randomPos = Math.floor(Math.random()*zeroNum);
-        console.log(randomPos);
         let zeroIndex = 0;
         for(let i = 0; i < 4; i++){
             for(let j = 0; j < 4; j++){
                 if(tmpBoard[i][j] === 0){
                     if(randomPos === zeroIndex){
                         tmpBoard[i][j] = nums[createNum];
+                        setBoard(tmpBoard);
                         return;
                     }
                     zeroIndex++;
@@ -69,6 +65,7 @@ function App() {
                     }
                 }
             }
+            setBoard(tmpBoard);
             createRandomBox();
         } else if(e.keyCode === 38){ // top
             for(let k = 0; k < 3; k++){
@@ -84,6 +81,7 @@ function App() {
                     }
                 }
             }
+            setBoard(tmpBoard);
             createRandomBox();
         } else if(e.keyCode === 39){ // right
             for(let k = 0; k < 3; k++){
@@ -99,6 +97,7 @@ function App() {
                     }
                 }
             }
+            setBoard(tmpBoard);
             createRandomBox();
         } else if(e.keyCode === 40){ // bottom
             for(let k = 0; k < 3; k++){
@@ -114,20 +113,19 @@ function App() {
                     }
                 }
             }
+            setBoard(tmpBoard);
             createRandomBox();
         }
-        setBoard(tmpBoard);
     }
 
     return (
-        <div className="App" ref={control} onKeyDown={handleKeyDown}>
+        <div className="App" {...swipeRef} >
             <div id="display">
                 {board.map((line, lineIndex) => line.map((v, vIndex) => ( 
                     <Box key={lineIndex + "" + vIndex} value={v} />
                 )))}
                 <div id="player"></div>
             </div>
-            <input type="text" id="control"/>
         </div>
     );
 }
