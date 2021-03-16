@@ -8,11 +8,7 @@ function App() {
         
     const [board, setBoard] = Object.freeze(useState(Array.from({length: 4},()=> Array.from({length: 4}, () => 0))));
     
-    const { swipeRef } = useSwipeable({
-        
-        onSwiped: () => console.log("swiped"),
-        onSwipedLeft: () => handleKeyDown({ keyCode: 37}),
-    })
+    
 
     useEffect(() => {
         let tmpBoard = board.slice();
@@ -51,7 +47,7 @@ function App() {
 
     function handleKeyDown(e){
         let tmpBoard = board.slice();
-        if(e.keyCode === 37){ // left
+        if(e.keyCode === 37 || e.swipe === "left"){ // left
             for(let k = 0; k < 3; k++){
                 for(let i = 0; i < 4; i++){
                     for(let j = 0; j < 3; j++){
@@ -67,7 +63,7 @@ function App() {
             }
             setBoard(tmpBoard);
             createRandomBox();
-        } else if(e.keyCode === 38){ // top
+        } else if(e.keyCode === 38 || e.swipe === "top"){ // top
             for(let k = 0; k < 3; k++){
                 for(let j = 0; j < 4; j++){
                     for(let i = 0; i < 3; i++){
@@ -83,7 +79,7 @@ function App() {
             }
             setBoard(tmpBoard);
             createRandomBox();
-        } else if(e.keyCode === 39){ // right
+        } else if(e.keyCode === 39 || e.swipe === "right"){ // right
             for(let k = 0; k < 3; k++){
                 for(let i = 0; i < 4; i++){
                     for(let j = 3; j >= 1; j--){
@@ -99,7 +95,7 @@ function App() {
             }
             setBoard(tmpBoard);
             createRandomBox();
-        } else if(e.keyCode === 40){ // bottom
+        } else if(e.keyCode === 40 || e.swipe === "bottom"){ // bottom
             for(let k = 0; k < 3; k++){
                 for(let j = 0; j < 4; j++){
                     for(let i = 3; i >= 1; i--){
@@ -118,13 +114,35 @@ function App() {
         }
     }
 
+    const handlers = useSwipeable({
+        onSwiped: (eventData) => {
+            console.log(eventData);
+            if(eventData.absX > eventData.absY){
+                if(eventData.absX > 100){
+                    if(eventData.deltaX < 0){
+                        handleKeyDown({swipe: "left"});
+                    } else {
+                        handleKeyDown({swipe: "right"});
+                    }
+                }
+            } else {
+                if(eventData.absY > 100) {
+                    if(eventData.deltaY < 0){
+                        handleKeyDown({swipe: "top"});
+                    } else {
+                        handleKeyDown({swipe: "bottom"});
+                    }
+                }
+            }
+        }
+    });
+
     return (
-        <div className="App" {...swipeRef} >
+        <div className="App" {...handlers} >
             <div id="display">
                 {board.map((line, lineIndex) => line.map((v, vIndex) => ( 
                     <Box key={lineIndex + "" + vIndex} value={v} />
                 )))}
-                <div id="player"></div>
             </div>
         </div>
     );

@@ -25,13 +25,13 @@ export function Box(prop){
     } else if(value === 512){
         bg = "#222222";
     } else if(value === 1024){
-        fs = "40px";
+        fs = "35px";
         bg = "#111111";
     } else if(value === 2048){
-        fs = "40px";
+        fs = "35px";
         bg = "#000000";
     } else {
-        fs = "40px";
+        fs = "35px";
         bg = "#000000";
     }
     
