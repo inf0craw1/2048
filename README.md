@@ -2,4 +2,5 @@
 live play: <https://inf0craw1.github.io/2048/>
 
 ## control
-arrow keys
+For PC: arrow keys
+For Mobile: swipe
